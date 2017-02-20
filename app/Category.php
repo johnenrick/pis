@@ -1,6 +1,6 @@
 <?php
 
-namespace pis_test;
+namespace pis;
 
 use Illuminate\Database\Eloquent\Model;
 

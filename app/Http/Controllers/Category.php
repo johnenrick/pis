@@ -1,9 +1,9 @@
 <?php
 
-namespace pis_test\Http\Controllers;
+namespace pis\Http\Controllers;
 
 use Illuminate\Http\Request;
-use pis_test\Category as Item;
+use pis\Category as Item;
 
 class Category extends APIController
 {

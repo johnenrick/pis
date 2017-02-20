@@ -1,9 +1,9 @@
 <?php
 
-namespace pis_test\Http\Controllers;
+namespace pis\Http\Controllers;
 
 use Illuminate\Http\Request;
-use pis_test\Product as DBModel;
+use pis\Product as DBModel;
 // use Illuminate\Support\Facades\DB;
 
 class Product extends APIController

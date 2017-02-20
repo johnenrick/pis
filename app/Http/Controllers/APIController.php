@@ -1,6 +1,6 @@
 <?php
 
-namespace pis_test\Http\Controllers;
+namespace pis\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;

@@ -1,9 +1,9 @@
 <?php
 
-namespace pis_test\Http\Controllers;
+namespace pis\Http\Controllers;
 
 use Illuminate\Http\Request;
-use pis_test\Unit as DBModel;
+use pis\Unit as DBModel;
 
 class Unit extends APIController
 {

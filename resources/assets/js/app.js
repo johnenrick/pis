@@ -14,7 +14,14 @@ require('./bootstrap');
  */
 
 Vue.component('example', require('./components/Example.vue'));
-
+Vue.component('unit-management', require('./modules/Unit_management.vue'));
+Vue.component('category-management', require('./modules/Category_management.vue'));
+Vue.component('product-management', require('./modules/Product_management.vue'));
 const app = new Vue({
-    el: '#app'
+    el: '#app',
+    data(){
+      var data = {};
+      return data;
+    }
+
 });

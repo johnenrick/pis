@@ -103,7 +103,7 @@ export default {
       };
       this.$http.get(this.api.retrieve, requestOption).then((response) => {
         // success callback
-        var result = JSON.parse(response.body);
+        var result = response.body;
         if(result.data){
           this.tableData.push(result.data);
           // Vue.set(this.tableData, rowID, );
@@ -120,7 +120,7 @@ export default {
       };
       this.$http.get(this.api.retrieve, requestOption).then((response) => {
         // success callback
-        var result = JSON.parse(response.body);
+        var result = response.body;
         if(result.data){
           if(this.tableData[row]["id"]*1 === entryID*1){
             Vue.set(this.tableData,row, result.data);
@@ -163,7 +163,7 @@ export default {
         }
         this.$http.get(this.api.retrieve, requestOption).then((response) => {
           // success callback
-          var result = JSON.parse(response.body);
+          var result = response.body;
           this.tableData = [];
           for(var row in result.data){
             this.tableData.push(result.data[row]);

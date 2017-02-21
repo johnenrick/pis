@@ -95,7 +95,6 @@ export default{
                 "background-color" : "skyblue"
               },
               value_changed : function(inputValues, moduleInstance){
-                console.log("bool")
                 inputValues["expense_mapping"] = parseInt( (inputValues["withdrawal"])+""+(inputValues["purchase"]), 2);
                 moduleInstance.$emit("input-changed", "expense_mapping", inputValues["expense_mapping"]);
               }

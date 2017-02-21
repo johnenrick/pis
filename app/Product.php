@@ -9,10 +9,10 @@ use DB;
 class Product extends APIModel
 {
     public function unit(){
-      return $this->belongsTo("pis_test\Unit")->select(["id", "code", "description"]);
+      return $this->belongsTo("pis\Unit")->select(["id", "code", "description"]);
     }
     public function category(){
-      return $this->belongsTo("pis_test\Category");
+      return $this->belongsTo("pis\Category");
     }
 
 }

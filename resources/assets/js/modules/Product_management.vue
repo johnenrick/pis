@@ -100,7 +100,7 @@ export default{
                 ]
               }
               moduleInstance.$http.get("api/category/retrieve", requestOption).then((response) => {
-                var result = JSON.parse(response.body);
+                var result = response.body;
                 if(result.data){
                   Vue.set(formSetting[key]["select_option"]["options"], 0,{
                     text : "Select",
@@ -146,7 +146,7 @@ export default{
                 ]
               }
               moduleInstance.$http.get("api/unit/retrieve", requestOption).then((response) => {
-                var result = JSON.parse(response.body);
+                var result = response.body;
                 Vue.set(formSetting[key]["select_option"]["options"], 0,{
                   text : "Select",
                   value : null
@@ -233,6 +233,7 @@ export default{
         price : {
           type : "decimal",
           col : 6,
+          read_only: true
         },
         is_transferred : {
           label : "Transferred to Poultry Main",
@@ -243,6 +244,7 @@ export default{
         cost : {
           type : "decimal",
           col : 6,
+          read_only: true
         },
         inactive : {
           label : "Inactive?",
@@ -268,7 +270,10 @@ export default{
             ]
           },
           input_style : {
-            background : "#fff4b9"
+            active_style :{
+              background : "lemonchiffon"
+            }
+
           },
           col : 6
         },
@@ -276,8 +281,13 @@ export default{
           type : "textarea",
           col : 6,
           input_style : {
-            background : "#fff4b9",
-            resize: "none"
+            active_style :{
+              background : "lemonchiffon"
+            },
+            style: {
+              resize: "none"
+            }
+
           }
         },
         form_group_on_order : {

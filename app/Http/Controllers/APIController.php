@@ -16,7 +16,7 @@ class APIController extends Controller
       "data" => null,
       "error" => array(),// {status, message}
       "debug" => null,
-      "request_timestamp"
+      "request_timestamp" => 0
     );
     protected $tableColumns = null;
     protected $notRequired = array();

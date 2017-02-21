@@ -9,10 +9,10 @@
       </div>
       <div class="col-sm-6 align-right">
         <button type="button" class="btn btn-default"><i class="fa fa-print" aria-hidden="true"></i> Print</button>
-        <button v-on:click="$emit('change-entry', 0)" type="button" class="btn btn-default"><i class="fa fa-step-backward" aria-hidden="true"></i></button>
-        <button v-on:click="$emit('change-entry', 1)" type="button" class="btn btn-default"><i class="fa fa-chevron-left" aria-hidden="true"></i></button>
-        <button v-on:click="$emit('change-entry', 2)" type="button" class="btn btn-default"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
-        <button v-on:click="$emit('change-entry', 3)" type="button" class="btn btn-default"><i class="fa fa-step-forward" aria-hidden="true"></i></button>
+        <button v-if="readOnly==true && !isLoading.length" v-on:click="$emit('change-entry', 0)" type="button" class="btn btn-default"><i class="fa fa-step-backward" aria-hidden="true"></i></button>
+        <button v-if="readOnly==true && !isLoading.length" v-on:click="$emit('change-entry', 1)" type="button" class="btn btn-default"><i class="fa fa-chevron-left" aria-hidden="true"></i></button>
+        <button v-if="readOnly==true && !isLoading.length" v-on:click="$emit('change-entry', 2)" type="button" class="btn btn-default"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+        <button v-if="readOnly==true && !isLoading.length" v-on:click="$emit('change-entry', 3)" type="button" class="btn btn-default"><i class="fa fa-step-forward" aria-hidden="true"></i></button>
       </div>
     </div>
     <div class="row">
@@ -148,7 +148,7 @@
         };
         this.$http.get(this.api.delete, requestOption).then((response) => {
           // success callback
-          var result = JSON.parse(response.body);
+          var result = response.body;
           if(result.data){
             this.$emit("entry-deleted", this.entry_id);
             this.entry_id=-1;
@@ -175,10 +175,10 @@
         // this.emptyFormValue();
         this.$http.get(this.api.retrieve, requestOption).then((response) => {
           // success callback
-          var result = JSON.parse(response.body);
+          var result = response.body;
           if(result.data){
             for(var key in this.formValue){
-              if(key !== "id" && result.data[key]){
+              if(key !== "id" && typeof result.data[key] !== "undefined"){
                 this.updateFormValue(key, result.data[key]);
                 var setting = this.formInputSetting;
                 for(var pathIndex in this.formValuePath[key]){
@@ -216,7 +216,7 @@
         }
         this.$http.get(link, requestOption).then((response) => {
           // success callback
-          var result = JSON.parse(response.body);
+          var result = response.body;
           if(result.data){
             if(this.entry_id === -1){
               this.entry_id = result.data;
@@ -225,6 +225,7 @@
               this.$emit("entry-updated", this.entry_id);
             }
             this.updatedAtTimestamp = result.request_timestamp;
+            this.readOnly = true;
           }else{
           }
           this.isLoading.pop();
@@ -266,7 +267,16 @@
             Vue.set(input, "default_value", ((typeof formInputSetting[db_name]["default_value"] !== "undefined") ? formInputSetting[db_name]["default_value"] : null));
             input.label = (formInputSetting[db_name]["label"]) ? formInputSetting[db_name]["label"] : input.name;
             input.label_style = (formInputSetting[db_name]["label_style"]) ? formInputSetting[db_name]["label_style"] : {};
-            input.input_style = (formInputSetting[db_name]["input_style"]) ? formInputSetting[db_name]["input_style"] : {};
+
+            input.input_style = {};
+            input.input_style_dummy = formInputSetting[db_name]["input_style"] ? formInputSetting[db_name]["input_style"] : {};
+            input.input_style_dummy.active_style = (input.input_style_dummy.active_style) ? input.input_style_dummy.active_style : {};
+            input.input_style_dummy.style = (input.input_style_dummy.style) ? input.input_style_dummy.style : {};
+            input.input_style.style = input.input_style_dummy.style;
+            input.input_style.active_style = $.extend(input.input_style_dummy.active_style, input.input_style.style)
+            // input.input_style.active_style = input.input_style.style(input.input_style.style);
+
+            input.read_only = formInputSetting[db_name]["read_only"] ? formInputSetting[db_name]["read_only"] : false;
             input.value_changed = (formInputSetting[db_name]["value_changed"]) ? formInputSetting[db_name]["value_changed"] : null;
             Vue.set(input, "style", ((typeof formInputSetting[db_name]["style"] !== "undefined") ? formInputSetting[db_name]["style"] : null));
             var defaultPlaceholder = ""
@@ -325,7 +335,8 @@
           case "checkbox" :
             return value*1 ? 1 :0;
           case "checkbox_option" :
-            return value*1 ? 1 :0;
+
+            return (value*1) ? 1 :0;
           case "select":
             return ( colValue !== null) ? colValue*1 : (inputSetting["default_value"]);
           default :

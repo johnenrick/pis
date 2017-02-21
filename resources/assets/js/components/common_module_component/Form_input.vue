@@ -8,12 +8,10 @@
             <template v-if="inputSetting['type']==='checkbox_option'">
               <label>
                 <input type="checkbox"
-                  v-on:change="$emit('input-changed', inputSetting['db_name'], input_values[inputSetting['db_name']])"
-                  v-bind:onclick="'return '+!(read_only || is_loading.length ? true : false)"
                   v-model="input_values[inputSetting['db_name']]"
-                  v-bind:value="input_values[inputSetting['db_name']]"
-                  v-bind:style="form_disabled ? {}:inputSetting['input_style']"
+                  v-bind:style="form_disabled ? inputSetting['input_style']['style']:inputSetting['input_style']['active_style']"
                   v-bind:disabled="form_disabled"
+                  v-on:click="$emit('input-changed', inputSetting['db_name'], (read_only || is_loading.length || inputSetting['read_only']) ? !input_values[inputSetting['db_name']] : input_values[inputSetting['db_name']])"
                   >
                 <span v-bind:style="inputSetting['label_style']">{{inputSetting['label']}}</span>
               </label>
@@ -32,20 +30,18 @@
               <div v-bind:class="inputSetting['col_input']" >
                 <template v-if="inputSetting['type']==='checkbox'" >
                   <input type="checkbox"
-                  v-bind:onclick="'return '+(read_only || is_loading.length)+'?false:true'"
-                  v-on:change="$emit('input-changed', inputSetting['db_name'], input_values[inputSetting['db_name']])"
-                  v-bind:value="input_values[inputSetting['db_name']]"
                   v-model="input_values[inputSetting['db_name']]"
-                  v-bind:style="form_disabled ? {}:inputSetting['input_style']"
+                  v-bind:style="form_disabled ? {}:inputSetting['input_style']['active_style']"
                   v-bind:disabled="form_disabled"
+                  v-on:click="$emit('input-changed', inputSetting['db_name'], (read_only || is_loading.length || inputSetting['read_only']) ? !input_values[inputSetting['db_name']] : input_values[inputSetting['db_name']])"
                   class="">
                 </template>
                 <template v-else-if="inputSetting['type']==='select'">
                   <select
                     v-on:change="$emit('input-changed', inputSetting['db_name'], $event.target.value)"
                     v-bind:value="input_values[inputSetting['db_name']]" class="form-control"
-                    v-bind:style="form_disabled ? {}:inputSetting['input_style']"
-                    v-bind:disabled="form_disabled || read_only || is_loading.length ? true :false">
+                    v-bind:style="form_disabled ? inputSetting['input_style']['style']:inputSetting['input_style']['active_style']"
+                    v-bind:disabled="form_disabled || read_only || is_loading.length || inputSetting['read_only'] ? true :false">
 
                     <template v-for="option in inputSetting['select_option']['options']">
                       <option v-bind:value="option['value']"  v-bind:selected="input_values[inputSetting['db_name']]===option['value']">{{option["text"]}}</option>
@@ -56,20 +52,20 @@
                 </template>
                 <template v-else-if="inputSetting['type']==='textarea'">
                   <textarea
-                    v-bind:onkeydown="'return ((event.keyCode <= 65 && event.keyCode >= 90) || event.keyCode==67 || event.keyCode==90 || event.keyCode==82 ) ? true : '+(!(read_only || is_loading.length))"
+                    v-bind:onkeydown="'return ((event.keyCode <= 65 && event.keyCode >= 90) || event.keyCode==67 || event.keyCode==90 || event.keyCode==82 ) ? true : '+(!(read_only || is_loading.length || inputSetting['read_only']))"
                     v-on:change="$emit('input-changed', inputSetting['db_name'], $event.target.value)"
                     v-model="input_values[inputSetting['db_name']]"
                     v-bind:name="inputSetting['db_name']"
                     v-bind:type="inputSetting['type']"
                     class="form-control"
                     v-bind:placeholder="inputSetting['placeholder']"
-                    v-bind:style="form_disabled ? {}:inputSetting['input_style']"
+                    v-bind:style="form_disabled ? inputSetting['input_style']['style']:inputSetting['input_style']['active_style']"
                     v-bind:disabled="form_disabled">
                   </textarea>
                 </template>
                 <template v-else>
                   <input
-                    v-bind:onkeydown="'return ((event.keyCode <= 65 && event.keyCode >= 90) || event.keyCode==67 || event.keyCode==90 || event.keyCode==82 ) ? true : '+!(read_only || is_loading.length)"
+                    v-bind:onkeydown="'return ((event.keyCode <= 65 && event.keyCode >= 90) || event.keyCode==67 || event.keyCode==90 || event.keyCode==82 ) ? true : '+!(read_only || is_loading.length || inputSetting['read_only'])"
                     v-on:change="$emit('input-changed', inputSetting['db_name'], $event.target.value)"
                     v-bind:value="input_values[inputSetting['db_name']]"
                     v-bind:name="inputSetting['db_name']"
@@ -77,7 +73,7 @@
                     class="form-control"
                     v-bind:class="inputSetting['type']"
                     v-bind:placeholder="inputSetting['placeholder']"
-                    v-bind:style="form_disabled ? {resize:'none'}:inputSetting['input_style']"
+                    v-bind:style="form_disabled ? inputSetting['input_style']['style']:inputSetting['input_style']['active_style']"
                     v-bind:disabled="form_disabled">
                 </template>
               </div>

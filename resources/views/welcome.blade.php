@@ -15,8 +15,8 @@
     <body>
       <div id="app" class=" container-fluid">
         <unit-management ></unit-management>
-        <category-management ></category-management>
-        <product-management ></product-management>
+         <category-management ></category-management>
+        <product-management ></product-management> 
       </div>
     </body>
     <script type="text/javascript" src="{{elixir('js/app.js')}}"></script>

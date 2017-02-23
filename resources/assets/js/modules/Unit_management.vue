@@ -10,8 +10,8 @@ export default{
     "common-module-component" : require('../components/common_module_component/Common_module_component.vue'),
   },
   data(){
-    var data = {};
-    var tableConfig = {
+    let data = {};
+    let tableConfig = {
       filterSetting : [
         {
           name : "Code"
@@ -34,7 +34,7 @@ export default{
       ],
       with_timestamp : true
     };
-    var formConfig = {
+    let formConfig = {
       formSetting :{
         title : "Unit Detail"
       },
@@ -50,7 +50,7 @@ export default{
         }
       }
     };
-    var unitConfig = {
+    let unitConfig = {
       api : "unit",
       tableConfig : tableConfig,
       formConfig : formConfig

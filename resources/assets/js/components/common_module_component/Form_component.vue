@@ -9,7 +9,11 @@
       </div>
       <div class="col-sm-6 align-right">
         <button type="button" class="btn btn-default"><i class="fa fa-print" aria-hidden="true"></i> Print</button>
-        <button v-if="readOnly==true && !isLoading.length" v-on:click="$emit('change-entry', 0)" type="button" class="btn btn-default"><i class="fa fa-step-backward" aria-hidden="true"></i></button>
+        <button v-if="readOnly==true && !isLoading.length"
+          v-on:click="$emit('change-entry', 0)"
+          type="button" class="btn btn-default">
+          <i class="fa fa-step-backward" aria-hidden="true"></i>
+        </button>
         <button v-if="readOnly==true && !isLoading.length" v-on:click="$emit('change-entry', 1)" type="button" class="btn btn-default"><i class="fa fa-chevron-left" aria-hidden="true"></i></button>
         <button v-if="readOnly==true && !isLoading.length" v-on:click="$emit('change-entry', 2)" type="button" class="btn btn-default"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
         <button v-if="readOnly==true && !isLoading.length" v-on:click="$emit('change-entry', 3)" type="button" class="btn btn-default"><i class="fa fa-step-forward" aria-hidden="true"></i></button>
@@ -38,10 +42,16 @@
                   </div>
                 </div>
               </div>
-              <div class="row">
-                <div class="col-sm-12" v-if="!readOnly">
-                  <button v-on:click="submitForm" type="button" v-bind:disabled="isLoading.length ? true : false">{{this.entry_id > 0 ? "Save" : "Create"}}</button>
-                  <button v-on:click="cancelForm" type="button" v-bind:disabled="isLoading.length ? true : false">{{this.entry_id > 0 ? "Close" : "Cancel"}}</button>
+              <div class="row" >
+                <div class="col-sm-12 text-right" v-if="!readOnly">
+                  <button v-if="this.entry_id <= 0" class="btn btn-default pull-left" v-on:click="submitForm('addmore')" type="button" v-bind:disabled="isLoading.length ? true : false" >
+                    <i class="fa fa-plus-square" aria-hidden="true"></i> Add more
+                  </button>
+                  <button class="btn btn-primary " v-on:click="submitForm" type="button" v-bind:disabled="isLoading.length ? true : false" >
+                    <span v-if="this.entry_id > 0"><i class="fa fa-save" aria-hidden="true"></i> SAVE</span>
+                    <span v-else><i class="fa fa-plus" aria-hidden="true"></i>  CREATE</span>
+                  </button>
+                  <button class="btn btn-default" v-on:click="cancelForm" type="button" v-bind:disabled="isLoading.length ? true : false">{{this.entry_id > 0 ? "Close" : "Cancel"}}</button>
                 </div>
               </div>
             </form>
@@ -86,13 +96,14 @@
     watch : {
       entry_id : function(value){
         value = value*1;
+        console.log("entry_id"+value)
         if(value === -1){//create
-          for(var key in this.formValue){
+          for(let key in this.formValue){
             if(key !== "id"){
               this.updateFormValue(key, null);
-              var setting = this.formInputSetting;
-              for(var pathIndex in this.formValuePath[key]){
-                setting = setting[this.formValuePath[key][pathIndex]]["inputSetting"];
+              let setting = this.formInputSetting;
+              for(let pathIndex in this.formValuePath[key]){
+                setting = setting[this.formValuePath[key][pathIndex]]["input_setting"];
               }
               if(setting[key]["select_option"] && setting[key]["select_option"]["option_function"]){
                 setting[key]["select_option"]["option_function"](setting, this);
@@ -128,11 +139,11 @@
       },
       updateFormValue(name, value){
         if(name === "id") return false;
-        var setting = this.formInputSetting
-        for(var pathIndex in this.formValuePath[name]){
-          setting = setting[this.formValuePath[name][pathIndex]]["inputSetting"];
+        let setting = this.formInputSetting
+        for(let pathIndex in this.formValuePath[name]){
+          setting = setting[this.formValuePath[name][pathIndex]]["input_setting"];
         }
-        var formattedValue = this.dataFormat(value, setting[name]);
+        let formattedValue = this.dataFormat(value, setting[name]);
         Vue.set(this.formValue, name, formattedValue);
 
         if(setting[name]["value_changed"]){
@@ -141,22 +152,53 @@
       },
       deleteEntry(){
         this.isLoading.push("deleteEntry");
-        var requestOption = {
-          params : {
-            "id" : this.entry_id
-          }
-        };
-        this.$http.get(this.api.delete, requestOption).then((response) => {
-          // success callback
-          var result = response.body;
-          if(result.data){
-            this.$emit("entry-deleted", this.entry_id);
-            this.entry_id=-1;
-            this.cancelForm();
-          }else{
-          }
-          this.isLoading.pop();
-        });
+
+        if(!this.formValue["locked"]){
+          bootbox.confirm({
+            size: 'small',
+            title : "Are you sure you want to delete this entry?",
+            message: 'Once this entry is deleted, it can no longer be recovered',
+            buttons: {
+              cancel: {
+                  label: 'No',
+                  className: 'btn-default'
+              },
+              confirm: {
+                  label: 'Yes, delete this entry',
+                  className: 'btn-danger'
+              },
+            },
+            callback : (result) => {
+              if(result){
+                let requestOption = {
+                  params : {
+                    "id" : this.entry_id
+                  }
+                };
+                this.$http.get(this.api.delete, requestOption).then((response) => {
+                  // success callback
+                  let result = response.body;
+                  if(result.data){
+                    this.$emit("entry-deleted", this.entry_id);
+                    this.entry_id=-1;
+                    this.cancelForm();
+                  }else{
+                  }
+                  this.isLoading.pop();
+                });
+              }else{
+                this.isLoading.pop();
+              }
+            }
+          })
+        }else{
+          bootbox.alert("This entry is locked! Contact the admin regarding this matter", ()=>{
+            this.isLoading.pop();
+          });
+
+        }
+
+
       },
       showEntry(){
         this.isLoading.push("showEntry");
@@ -164,7 +206,7 @@
 
           this.showEntryRequest.abort();
         }
-        var requestOption = {
+        let requestOption = {
           before : function(xhr){
             this.showEntryRequest = xhr;
           },
@@ -175,14 +217,14 @@
         // this.emptyFormValue();
         this.$http.get(this.api.retrieve, requestOption).then((response) => {
           // success callback
-          var result = response.body;
+          let result = response.body;
           if(result.data){
-            for(var key in this.formValue){
+            for(let key in this.formValue){
               if(key !== "id" && typeof result.data[key] !== "undefined"){
                 this.updateFormValue(key, result.data[key]);
-                var setting = this.formInputSetting;
-                for(var pathIndex in this.formValuePath[key]){
-                  setting = setting[this.formValuePath[key][pathIndex]]["inputSetting"];
+                let setting = this.formInputSetting;
+                for(let pathIndex in this.formValuePath[key]){
+                  setting = setting[this.formValuePath[key][pathIndex]]["input_setting"];
                 }
                 if(setting[key]["select_option"] && setting[key]["select_option"]["option_function"]){
                   setting[key]["select_option"]["option_function"](setting, this);
@@ -197,36 +239,59 @@
       },
       emptyFormValue(){
 
-        for(var x in this.formValue){
+        for(let x in this.formValue){
           if(x !== "id"){
             this.updateFormValue(x, null);
           }
         }
         this.updatedAtTimestamp = "";
       },
-      submitForm(){
+      submitForm(option){
+        if(typeof option === "undefined"){
+          option = "";
+        }
         this.isLoading.push("submitForm");
-        var requestOption = {
+        let requestOption = {
           params : this.formValue
         };
-        var link = this.api.create;
+        let link = this.api.create;
         if(this.entry_id > 0){
           requestOption.params.id = this.entry_id;
           link = this.api.update;
         }
         this.$http.get(link, requestOption).then((response) => {
           // success callback
-          var result = response.body;
+          let result = response.body;
           if(result.data){
             if(this.entry_id === -1){
               this.entry_id = result.data;
               this.$emit("entry-created", this.entry_id);
+              if(option === "addmore"){
+                this.entry_id = -1;
+                this.emptyFormValue();
+              }else{
+                this.updatedAtTimestamp = result.request_timestamp;
+                this.readOnly = true;
+              }
             }else{
               this.$emit("entry-updated", this.entry_id);
+              this.updatedAtTimestamp = result.request_timestamp;
+              this.readOnly = true;
             }
-            this.updatedAtTimestamp = result.request_timestamp;
-            this.readOnly = true;
+
           }else{
+            var message = "";
+            if(result.error.status === 100){
+              for(var x in result.error.message){
+                message += '<i class="fa text-danger fa-chevron-right" aria-hidden="true"></i> '+result.error.message[x][0]+"<br>"
+              }
+            }
+            bootbox.alert({
+              size: 'small',
+              title: '<span class="text-danger"><i class="fa fa-warning" aria-hidden="true"></i> Operation Failed!</span>',
+              closeButton : false,
+              message : message
+            })
           }
           this.isLoading.pop();
         });
@@ -244,10 +309,10 @@
         if(typeof path === "undefined"){
           path = [];
         }
-        var currentPath = path.slice(0);
-        var settings = {};
-        for(var db_name in formInputSetting){
-          var input = {};
+        let currentPath = path.slice(0);
+        let settings = {};
+        for(let db_name in formInputSetting){
+          let input = {};
           if(db_name.indexOf("dummy") > -1){//init dummy
             input.type = "dummy"
             input.label = "_"
@@ -279,7 +344,7 @@
             input.read_only = formInputSetting[db_name]["read_only"] ? formInputSetting[db_name]["read_only"] : false;
             input.value_changed = (formInputSetting[db_name]["value_changed"]) ? formInputSetting[db_name]["value_changed"] : null;
             Vue.set(input, "style", ((typeof formInputSetting[db_name]["style"] !== "undefined") ? formInputSetting[db_name]["style"] : null));
-            var defaultPlaceholder = ""
+            let defaultPlaceholder = ""
             switch(input.type){
               case "number" :
                 defaultPlaceholder = 0;
@@ -315,7 +380,7 @@
             settings[db_name].col = (formInputSetting[db_name]["col"]) ? formInputSetting[db_name]["col"]*1 : 12;
             settings[db_name].group_name = formInputSetting[db_name]["group_name"] ? formInputSetting[db_name]["group_name"] : "";
             currentPath.push(db_name);
-            Vue.set(settings[db_name], "inputSetting", this.initFormInputSetting(formInputSetting[db_name]["inputSetting"],currentPath))
+            Vue.set(settings[db_name], "input_setting", this.initFormInputSetting(formInputSetting[db_name]["input_setting"],currentPath))
 
           }
         }
@@ -325,8 +390,8 @@
         return ((string).replace(/_/g, " ")).replace(/\w\S*/g, function(string){return string.charAt(0).toUpperCase() + string.substr(1).toLowerCase();})
       },
       dataFormat(value, inputSetting, self){
-        var type = inputSetting["type"];
-        var colValue = value;
+        let type = inputSetting["type"];
+        let colValue = value;
         switch(type){
           case "decimal" :
             return ((colValue !==""  && colValue !== null && typeof colValue !== "undefined") ? colValue*1 : inputSetting["default_value"])*1;

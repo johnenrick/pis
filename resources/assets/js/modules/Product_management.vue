@@ -1,5 +1,5 @@
 <template>
-  <common-module-component :config="commonFormConfig" ></common-module-component>
+  <common-module-component :config="commonModuleConfig" ></common-module-component>
 </template>
 
 <script>
@@ -10,8 +10,8 @@ export default{
     "common-module-component" : require('../components/common_module_component/Common_module_component.vue'),
   },
   data(){
-    var data = {};
-    var tableConfig = {
+    let data = {};
+    let tableConfig = {
       filterSetting : [
         {
           name : "Code"
@@ -69,7 +69,7 @@ export default{
         }
       ]
     };
-    var formConfig = {
+    let formConfig = {
       formSetting :{
         title : "Product Detail"
       },
@@ -84,12 +84,12 @@ export default{
           select_option : {
             option_function : function(formSetting, moduleInstance){
               moduleInstance.isLoading.push("category_select_option");
-              var requestOption = {
+              let requestOption = {
                 params : {
                   with_soft_delete : true
                 }
               };
-              var key = "category_id";
+              let key = "category_id";
               if(formSetting[key]["select_option"]["datetime_updated"]){
                 requestOption.params.condition = [
                   {
@@ -100,17 +100,23 @@ export default{
                 ]
               }
               moduleInstance.$http.get("api/category/retrieve", requestOption).then((response) => {
-                var result = response.body;
+                let result = response.body;
                 if(result.data){
                   Vue.set(formSetting[key]["select_option"]["options"], 0,{
                     text : "Select",
                     value : null
                   });
-                  for(var x in result.data){
-                    Vue.set(formSetting[key]["select_option"]["options"], result.data[x]["id"], {
-                      text : result.data[x]["description"],
-                      value : result.data[x]["id"]
-                    });
+                  for(let x in result.data){
+                    if(result.data[x]['deleted_at'] == null){
+                      Vue.set(formSetting[key]["select_option"]["options"], result.data[x]["id"], {
+                        text : result.data[x]["description"],
+                        value : result.data[x]["id"]
+                      });
+                    }else{
+                      if(typeof formSetting[key]["select_option"]["options"][result.data[x]["id"]] !== "undefined"){
+                        delete formSetting[key]["select_option"]["options"][result.data[x]["id"]];
+                      }
+                    }
                     if(new Date(result.data[x]["updated_at"]) > new Date(formSetting[key]["select_option"]["datetime_updated"])){
                       formSetting[key]["select_option"]["datetime_updated"] = result.data[x]["updated_at"];
                     }
@@ -130,12 +136,12 @@ export default{
           select_option : {
             option_function : function(formSetting, moduleInstance){
               moduleInstance.isLoading.push("unit_select_option");
-              var requestOption = {
+              let requestOption = {
                 params : {
                   with_soft_delete : true
                 }
               };
-              var key = "unit_id";
+              let key = "unit_id";
               if(formSetting[key]["select_option"]["datetime_updated"]){
                 requestOption.params.condition = [
                   {
@@ -146,13 +152,13 @@ export default{
                 ]
               }
               moduleInstance.$http.get("api/unit/retrieve", requestOption).then((response) => {
-                var result = response.body;
+                let result = response.body;
                 Vue.set(formSetting[key]["select_option"]["options"], 0,{
                   text : "Select",
                   value : null
                 });
                 if(result.data){
-                  for(var x in result.data){
+                  for(let x in result.data){
 
                     Vue.set(formSetting[key]["select_option"]["options"], +result.data[x]["id"], {
                       text : result.data[x]["description"],
@@ -294,7 +300,7 @@ export default{
 
           border_style : "all",
           col : 6,
-          inputSetting : {
+          input_setting : {
             quantity_on_order : {
               type : "number",
               col_label: 12,
@@ -309,12 +315,12 @@ export default{
         }
       }
     };
-    var moduleConfig = {
+    let moduleConfig = {
       api : "product",
       tableConfig : tableConfig,
       formConfig : formConfig
     }
-    data.commonFormConfig = moduleConfig;
+    data.commonModuleConfig = moduleConfig;
     return data;
   }
 }

@@ -20,7 +20,7 @@ Vue.component('product-management', require('./modules/Product_management.vue'))
 const app = new Vue({
     el: '#app',
     data(){
-      var data = {};
+      let data = {};
       return data;
     }
 

@@ -19,7 +19,7 @@
 </template>
 <script>
 /**
-var tableConfig = {
+let tableConfig = {
   apiSetting : {
     link : "product/retrieve"
   },
@@ -85,7 +85,7 @@ var tableConfig = {
     }
   ]]
 };
-var formConfig = {
+let formConfig = {
   formSetting :{
     api : "Product",
     title : "Product Detail"
@@ -108,7 +108,7 @@ var formConfig = {
     }
   ]
 };
-var setting = {
+let setting = {
   tableConfig : tableConfig,
   formConfig : formConfig
 }
@@ -121,7 +121,7 @@ var setting = {
       "form-component" : require('./Form_component.vue')
     },
     data(){
-      var configuration = this.config;
+      let configuration = this.config;
       if(typeof configuration.api === "string"){
         configuration.api = {
           create : "api/"+configuration.api+"/create",
@@ -192,10 +192,9 @@ var setting = {
         this.tableConfig.currentRowValue = row;
         this.formConfig.id = 0;
         this.formConfig.readOnly = false;
-        var vueInstance = this;
-        setTimeout(function(){
-          vueInstance.formConfig.id = id;
-          vueInstance.formConfig.readOnly = true;
+        setTimeout(()=>{
+          this.formConfig.id = id;
+          this.formConfig.readOnly = true;
         }, 10);
       }
     }

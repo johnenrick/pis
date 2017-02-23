@@ -62,9 +62,8 @@ export default {
 
   },
   mounted(){
-    var self = this;
-    setTimeout(function(){
-      self.retrieveData();
+    setTimeout(()=>{
+      this.retrieveData();
     },1)
 
   },
@@ -96,14 +95,14 @@ export default {
   methods : {
     createRow(rowID){
       this.isLoading.push("createRow");
-      var requestOption = {
+      let requestOption = {
         params : {
           id : rowID
         }
       };
       this.$http.get(this.api.retrieve, requestOption).then((response) => {
         // success callback
-        var result = response.body;
+        let result = response.body;
         if(result.data){
           this.tableData.push(result.data);
           // Vue.set(this.tableData, rowID, );
@@ -113,19 +112,19 @@ export default {
     },
     updateRow(row, entryID){
       this.isLoading.push("updateRow");
-      var requestOption = {
+      let requestOption = {
         params : {
           id : this.tableData[row]["id"]
         }
       };
       this.$http.get(this.api.retrieve, requestOption).then((response) => {
         // success callback
-        var result = response.body;
+        let result = response.body;
         if(result.data){
           if(this.tableData[row]["id"]*1 === entryID*1){
             Vue.set(this.tableData,row, result.data);
           }else{
-            for(var x = 0; x < this.tableData.length; x++){
+            for(let x = 0; x < this.tableData.length; x++){
               if(this.tableData[x]["id"]*1 === entryID){
                 Vue.set(this.tableData,x, result.data);
                 break;
@@ -148,13 +147,13 @@ export default {
       if(mode === 1){//search
 
       }else{
-        var requestOption = {
+        let requestOption = {
           params : {
 
           }
         };
         if(mode === 2 && this.filterValue !== ""){//filter
-          var condition = {
+          let condition = {
             column : this.filterSettings[this.currentFilter]['name'],
             value : "%"+this.filterValue+"%" ,
             clause : this.filterSettings[this.currentFilter]['clause']
@@ -163,9 +162,9 @@ export default {
         }
         this.$http.get(this.api.retrieve, requestOption).then((response) => {
           // success callback
-          var result = response.body;
+          let result = response.body;
           this.tableData = [];
-          for(var row in result.data){
+          for(let row in result.data){
             this.tableData.push(result.data[row]);
           }
           this.$emit("table-updated", result.data.length);
@@ -186,8 +185,8 @@ export default {
       }
     },
     initFilterSetting(){
-      var filterSetting = this.filter_setting;
-      for(var x = 0; x < filterSetting.length; x++){
+      let filterSetting = this.filter_setting;
+      for(let x = 0; x < filterSetting.length; x++){
         filterSetting[x]["db_name"] = (typeof filterSetting[x]["db_name"] === "undefined") ? this.$options.filters.underscoreCase(filterSetting[x]["name"]) : filterSetting[x]["db_name"];
         filterSetting[x]["placeholder"] = (typeof filterSetting[x]["placeholder"] === "undefined") ? filterSetting[x]["name"] : filterSetting[x]["placeholder"];
         filterSetting[x]["type"] = (typeof filterSetting[x]["type"] === "undefined") ? "text": filterSetting[x]["type"];
@@ -208,23 +207,23 @@ export default {
       this.filterSettings = filterSetting;
     },
     initColumnSetting(){
-      var initializedData = this.column_setting;
-      var dummyLinear = [];
+      let initializedData = this.column_setting;
+      let dummyLinear = [];
       if(initializedData.length){//check if it has value
         if(initializedData[0].length === undefined){//check if object not array; one row thead
 
-          for(var x = 0; x < initializedData.length; x++){
+          for(let x = 0; x < initializedData.length; x++){
             this.initColumnSettingDefault(initializedData[x]);
           }
           dummyLinear = initializedData.slice(0);
           initializedData = [initializedData];
 
         }else if(initializedData[0].length){//multiple row thead
-          var dsrCounter = 0;//DummySecondRowCounter
-          for(var x = 0; x < initializedData[0].length; x++){//loop first row thead
+          let dsrCounter = 0;//DummySecondRowCounter
+          for(let x = 0; x < initializedData[0].length; x++){//loop first row thead
             this.initColumnSettingDefault(initializedData[0][x]);
             if(initializedData[0][x]["colspan"]){//thead with subrow
-              var y = 0;
+              let y = 0;
               for(y = 0; y < initializedData[0][x]["colspan"]; y++){//changing linear order
                 if(initializedData.length >1 && initializedData[1].length > 0){
                   this.initColumnSettingDefault(initializedData[1][dsrCounter]);
@@ -243,7 +242,7 @@ export default {
         }
       }
       if(this.timestamp !== false){
-        var timestamp = {
+        let timestamp = {
           name : "Last Updated",
           db_name : "updated_at",
           type : "timestamp",
@@ -259,7 +258,7 @@ export default {
     },
     initColumnSettingDefault(initializedData){
       initializedData["db_name"] = (typeof initializedData["db_name"] === "undefined") ? this.$options.filters.underscoreCase(initializedData["name"]) : initializedData["db_name"];
-      var defaultWidthClass = "";
+      let defaultWidthClass = "";
       if(initializedData["type"] === "number" || initializedData["type"] === "decimal" || initializedData["type"] === "checkbox"|| initializedData["type"] === "y/n"){
         defaultWidthClass = "small-width";
       }
@@ -288,12 +287,12 @@ export default {
       return (value).toLocaleLowerCase().replace(/\ /g, "_")
     },
     dataFormat(colName, colSetting, rowValue){
-      var type = colSetting["type"];
-      var value = (typeof rowValue[colName] !== undefined) ? rowValue[colName] : null;
+      let type = colSetting["type"];
+      let value = (typeof rowValue[colName] !== undefined) ? rowValue[colName] : null;
       if(colName.indexOf(".")!==-1){
-        var colNames = colName.split(".");
-        var traverseColumn = rowValue;
-        for(var x in colNames){
+        let colNames = colName.split(".");
+        let traverseColumn = rowValue;
+        for(let x in colNames){
           if(traverseColumn[colNames[x]]){
             traverseColumn = traverseColumn[colNames[x]];
           }else{

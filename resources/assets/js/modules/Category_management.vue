@@ -10,8 +10,8 @@ export default{
     "common-module-component" : require('../components/common_module_component/Common_module_component.vue'),
   },
   data(){
-    var data = {};
-    var tableConfig = {
+    let data = {};
+    let tableConfig = {
       filterSetting : [
         {
           name : "Code"
@@ -29,6 +29,7 @@ export default{
           name : "Description"
         },
         {
+
           name : "Expense Mapping",
           rowspan : 1,
           colspan : 2
@@ -50,9 +51,9 @@ export default{
       ]],
       with_timestamp : true
     };
-    var formConfig = {
+    let formConfig = {
       formSetting :{
-        title : "Unit Detail"
+        title : "Category Detail"
       },
       formInputSetting : {
         code :{},
@@ -68,7 +69,7 @@ export default{
         form_group_budget_mapping : {
           border_style : "all",
           group_name : "Budget Mapping",
-          inputSetting : {
+          input_setting : {
             expense_mapping : {
               type : "hidden",
               value_changed : function(inputValues){
@@ -103,7 +104,7 @@ export default{
         }
       }
     };
-    var unitConfig = {
+    let unitConfig = {
       api : "category",
       tableConfig : tableConfig,
       formConfig : formConfig

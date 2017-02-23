@@ -52,7 +52,7 @@
                 </template>
                 <template v-else-if="inputSetting['type']==='textarea'">
                   <textarea
-                    v-bind:onkeydown="'return ((event.keyCode <= 65 && event.keyCode >= 90) || event.keyCode==67 || event.keyCode==90 || event.keyCode==82 ) ? true : '+(!(read_only || is_loading.length || inputSetting['read_only']))"
+                    v-on:keydown="(read_only || is_loading.length || inputSetting['read_only']) ? $event.preventDefault() : true"
                     v-on:change="$emit('input-changed', inputSetting['db_name'], $event.target.value)"
                     v-model="input_values[inputSetting['db_name']]"
                     v-bind:name="inputSetting['db_name']"
@@ -65,11 +65,11 @@
                 </template>
                 <template v-else>
                   <input
-                    v-bind:onkeydown="'return ((event.keyCode <= 65 && event.keyCode >= 90) || event.keyCode==67 || event.keyCode==90 || event.keyCode==82 ) ? true : '+!(read_only || is_loading.length || inputSetting['read_only'])"
-                    v-on:change="$emit('input-changed', inputSetting['db_name'], $event.target.value)"
+                    v-on:keydown="(read_only || is_loading.length || inputSetting['read_only']) ? $event.preventDefault() : ''"
+                    v-on:change="$emit('input-changed', inputSetting['db_name'], $event.target.value);"
                     v-bind:value="input_values[inputSetting['db_name']]"
                     v-bind:name="inputSetting['db_name']"
-                    v-bind:type="text"
+                    type="text"
                     class="form-control"
                     v-bind:class="inputSetting['type']"
                     v-bind:placeholder="inputSetting['placeholder']"
@@ -87,7 +87,7 @@
                   :read_only="read_only"
                   :form_disabled="form_disabled"
                   :input_values="input_values"
-                  :input_settings="inputSetting['inputSetting']"
+                  :input_settings="inputSetting['input_setting']"
                   :border_style="inputSetting['border_style']"
                   :disabled="form_disabled"
                   :is_loading="is_loading"
@@ -108,7 +108,7 @@
       this.initStyle();
     },
     data(){
-      var data = {
+      let data = {
         formGroupStyle : {}
       };
       return data;
@@ -125,7 +125,7 @@
     },
     methods : {
       initStyle(){
-        var groupStyle = {};
+        let groupStyle = {};
         if(this.border_style === "all"){
           groupStyle["border-style"] = "solid";
           groupStyle["border-width"] = "1px";

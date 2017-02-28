@@ -117,8 +117,8 @@ let setting = {
     mounted(){
     },
     components :{
-      "table-component" : require('./Table_component.vue'),
-      "form-component" : require('./Form_component.vue')
+      "table-component" : require('./TableComponent.vue'),
+      "form-component" : require('./FormComponent.vue')
     },
     data(){
       let configuration = this.config;

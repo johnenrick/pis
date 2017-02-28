@@ -7,7 +7,7 @@ export default{
   mounted(){
   },
   components :{
-    "common-module-component" : require('../components/common_module_component/Common_module_component.vue'),
+    "common-module-component" : require('../components/common_module_component/CommonModuleComponent.vue'),
   },
   data(){
     let data = {};

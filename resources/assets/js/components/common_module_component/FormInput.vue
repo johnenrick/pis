@@ -102,7 +102,7 @@
 <script>
   export default{
     beforeCreate: function () {
-      this.$options.components.formInputRecursive = require('./Form_input.vue');
+      this.$options.components.formInputRecursive = require('./FormInput.vue');
     },
     created(){
       this.initStyle();

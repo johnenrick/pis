@@ -69,7 +69,7 @@
       this.formInputSetting = this.initFormInputSetting(this.form_input_setting);
     },
     components :{
-      "form-input" : require('./Form_input.vue'),
+      "form-input" : require('./FormInput.vue'),
     },
     data(){
       return {
